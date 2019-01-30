@@ -66,7 +66,7 @@ namespace TreeviewBD
                 {
                     foreach (DataRow dataRow3 in dataTable3.Rows)
                     {
-                        TreeNode childnode3 = new TreeNode();
+                      TreeNode childnode3 = new TreeNode();
                         childnode3.Text = dataRow3["DepartmentLevel4"].ToString();
                         parentNode.ChildNodes.Add(childnode3);
                     }
