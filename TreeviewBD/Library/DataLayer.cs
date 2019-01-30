@@ -10,6 +10,19 @@ namespace Library
 {
     public static class DataLayer
     {
+
+        private static SqlConnection CreateConnection(string connKey)
+        {
+            string connectionString = ConfigurationManager.ConnectionStrings[connKey].ConnectionString;
+
+            SqlConnection sqlConnection = new SqlConnection(connectionString);
+
+            sqlConnection.Open();
+
+            return sqlConnection;
+        }
+
+
         public static DataTable GetUserDepartment(string userLogin)
         {
             DataTable datatable = new DataTable();
@@ -42,16 +55,73 @@ namespace Library
             return datatable;
         }
 
-        private static SqlConnection CreateConnection(string connKey)
+        public static DataTable GetTreeviewCandidate()
         {
-            string connectionString = ConfigurationManager.ConnectionStrings[connKey].ConnectionString;
+            DataTable dataTable = new DataTable();
+            string command = string.Format("Select distinct DepartmentLevel1  from CANDIDATE");
 
-            SqlConnection sqlConnection = new SqlConnection(connectionString);
-
-            sqlConnection.Open();
-
-            return sqlConnection;
+            using (SqlConnection sqlConnection = CreateConnection("ITAU_SSMP"))
+            {
+                using(SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(command, sqlConnection))
+                {
+                    sqlDataAdapter.Fill(dataTable);
+                }
+            }
+            return dataTable;       
         }
+
+        public static DataTable GetTreeviewCandidateDP1()
+        {
+            DataTable dataTable = new DataTable();
+            string command = string.Format("Select distinct DepartmentLevel2 from CANDIDATE where DepartmentLevel1 = DepartmentLevel1");
+
+            using (SqlConnection sqlConnection = CreateConnection("ITAU_SSMP"))
+            {
+                using (SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(command, sqlConnection))
+                {
+                    sqlDataAdapter.Fill(dataTable);
+                }
+            }
+            return dataTable;
+        }
+
+        public static DataTable GetTreeviewCandidateDP2()
+        {
+            DataTable dataTable = new DataTable();
+            string command = string.Format("Select distinct DepartmentLevel3 from CANDIDATE where DepartmentLevel2 = DepartmentLevel2");
+
+            using (SqlConnection sqlConnection = CreateConnection("ITAU_SSMP"))
+            {
+                using (SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(command, sqlConnection))
+                {
+                    sqlDataAdapter.Fill(dataTable);
+                }
+            }
+            return dataTable;
+        }
+
+        public static DataTable GetTreeviewCandidateDP3()
+        {
+            DataTable dataTable = new DataTable();
+            string command = string.Format("Select distinct DepartmentLevel4 from CANDIDATE where DepartmentLevel3 = DepartmentLevel3");
+
+            using (SqlConnection sqlConnection = CreateConnection("ITAU_SSMP"))
+            {
+                using (SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(command, sqlConnection))
+                {
+                    sqlDataAdapter.Fill(dataTable);
+                }
+            }
+            return dataTable;
+        }
+
+
+
+
+
+
+
+        
 
 
     }

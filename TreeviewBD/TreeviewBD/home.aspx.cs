@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Library;
+using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.DirectoryServices;
 using System.Linq;
 using System.Web;
@@ -16,87 +19,72 @@ namespace TreeviewBD
 
             if (!IsPostBack)
             {
-                TreeNode node = new TreeNode();
-                node.ImageUrl = "~/imagens/GRUPO.png";
-                node.Text = "CONTOSO";
-                node.Value = "DC=CONTOSO,DC=LOCAL";
-                arvore.Nodes.Add(node);
-            }
-        }
-
-        public string[] GetOUs(string path)
-
-        {
-            List<string> obj = new List<string>(); //nao precisa de tamanho fixo
-                                                   // List<string> users = new List<string>();
-
-
-            DirectoryEntry entry = new DirectoryEntry("LDAP://192.168.92.200/" + path, "contoso\\administrator", "Br@sil01");
-
-            foreach (DirectoryEntry child in entry.Children)//cria uma var que vai navegar pelos filhos do AD
-            {
-                if (child.SchemaClassName == "organizationalUnit") //seleciona apenas o tipo OU
+                using (DataTable datatable = DataLayer.GetTreeviewCandidate())
                 {
-                    obj.Add(child.Path.Split('/')[3]); //seleciona um separador, passando o index do que vc quer retornar
+                    foreach (DataRow dataRow in datatable.Rows)
+                    {
+                         TreeNode parentNode = new TreeNode();
+                         parentNode.Text = dataRow["DepartmentLevel1"].ToString();
+                         parentNode.Value = dataRow["DepartmentLevel1"].ToString();
+                         arvore.Nodes.Add(parentNode);
 
+                    }
 
                 }
 
-                else if (child.SchemaClassName == "user")
-                {
-
-                    obj.Add(child.Path.Split('/')[3]);
-                }
             }
-
-            entry.Dispose();
-            return obj.ToArray(); // converter um list para tipo array
         }
 
-
-
-        public void ExpandArvore(TreeNode node)
+        public void ExpandArvore(TreeNode parentNode)
         {
             try
             {
-                //string[] directories = Directory.GetDirectories(node.Value);
-                string[] directories = GetOUs(node.Value);
 
-
-                foreach (string directory in directories)//cria uma var que vai percorrer o array listado acima
+                using (DataTable dataTable1 = DataLayer.GetTreeviewCandidateDP1())
                 {
-                    TreeNode childNote = new TreeNode();
 
-                    //childNote.Text = directory.Split('\\')[directory.Split('\\').Length -1];
-                    childNote.Text = directory.Split(',')[0].Split('=')[1];
-
-                    if (directory.StartsWith("OU"))
+                    foreach (DataRow dataRow1 in dataTable1.Rows)
                     {
-                        childNote.ImageUrl = "~/imagens/GRUPO.png";
+                        TreeNode childnode = new TreeNode();
+                        childnode.Text = dataRow1["DepartmentLevel2"].ToString();
+                        parentNode.ChildNodes.Add(childnode);
 
                     }
-                    else if (directory.StartsWith("CN"))
+                }
+
+                using (DataTable dataTable2 = DataLayer.GetTreeviewCandidateDP2())
+                {
+                    foreach (DataRow dataRow2 in dataTable2.Rows)
                     {
-                        childNote.ImageUrl = "~/imagens/USUARIO.png";
-
+                        TreeNode childnode = new TreeNode();
+                        childnode.Text = dataRow2["DepartmentLevel3"].ToString();
+                        parentNode.ChildNodes.Add(childnode);
                     }
+                }
 
-                    childNote.Value = directory;
-                    node.ChildNodes.Add(childNote);
-
+                using (DataTable dataTable3 = DataLayer.GetTreeviewCandidateDP3())
+                {
+                    foreach (DataRow dataRow3 in dataTable3.Rows)
+                    {
+                        TreeNode childnode3 = new TreeNode();
+                        childnode3.Text = dataRow3["DepartmentLevel4"].ToString();
+                        parentNode.ChildNodes.Add(childnode3);
+                    }
                 }
 
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.Write(ex.Message);
             }
-
         }
 
         protected void arvore_SelectedNodeChanged(object sender, EventArgs e)
         {
             ExpandArvore((sender as TreeView).SelectedNode); //chamada generica
         }
+
+     
+
     }
 }
