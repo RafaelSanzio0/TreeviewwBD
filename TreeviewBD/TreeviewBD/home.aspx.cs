@@ -39,56 +39,38 @@ namespace TreeviewBD
         {
             try { 
             
-                TreeNode childnode;
-
                 using (DataTable dataTable1 = DataLayer.GetTreeviewCandidateDP1())
                 {
-
                     foreach (DataRow dataRow1 in dataTable1.Rows)
                     {
                         TreeNode t = new TreeNode();
                         t.Text = dataRow1["DepartmentLevel2"].ToString();
                         parentNode.ChildNodes.Add(t);
-                       // childnode = t;
 
                         using (DataTable dataTable2 = DataLayer.GetTreeviewCandidateDP2())
                         {
-
                             foreach(DataRow dataRow2 in dataTable2.Rows)
                             {
                                 TreeNode t2= new TreeNode();
                                 t2.Text = dataRow2["DepartmentLevel3"].ToString();
                                 t.ChildNodes.Add(t2);
-                               // childnode = t2;
 
+                                using (DataTable dataTable3 = DataLayer.GetTreeviewCandidateDP3())
+                                {
 
+                                    foreach (DataRow dataRow3 in dataTable3.Rows)
+                                    {
+                                        TreeNode t3 = new TreeNode();
+                                        t3.Text = dataRow3["DepartmentLevel4"].ToString();
+                                        t2.ChildNodes.Add(t3);
 
+                                    }
+                                }
                             }
                         }
+         
                     }
                 }
-
-
-                //using (DataTable dataTable2 = DataLayer.GetTreeviewCandidateDP2())
-                //{
-                //    foreach (DataRow dataRow2 in dataTable2.Rows)
-                //    {
-                //        TreeNode childnode = new TreeNode();
-                //        childnode.Text = dataRow2["DepartmentLevel3"].ToString();
-                //        parentNode.ChildNodes.Add(childnode);
-                //    }
-                //}
-
-                //using (DataTable dataTable3 = DataLayer.GetTreeviewCandidateDP3())
-                //{
-                //    foreach (DataRow dataRow3 in dataTable3.Rows)
-                //    {
-                //      TreeNode childnode3 = new TreeNode();
-                //        childnode3.Text = dataRow3["DepartmentLevel4"].ToString();
-                //        parentNode.ChildNodes.Add(childnode3);
-                //    }
-                //}
-
             }
             catch (Exception ex)
             {
